@@ -3,7 +3,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 /**
  * User schema for authentication and identification
  */
-export interface IUser extends Document {
+export interface IUser extends Omit<Document, '_id'> {
     _id: string;
     email: string;
     name: string;

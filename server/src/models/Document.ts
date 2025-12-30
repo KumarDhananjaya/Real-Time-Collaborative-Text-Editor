@@ -4,7 +4,7 @@ import mongoose, { Schema, Document } from 'mongoose';
  * Document schema for storing collaborative documents
  * Stores both metadata and CRDT state snapshots
  */
-export interface IDocument extends Document {
+export interface IDocument extends Omit<Document, '_id'> {
     _id: string;
     title: string;
     content: string; // Plain text representation for search/preview

@@ -1,21 +1,22 @@
 import Redis from 'ioredis';
 import { config } from './index';
 
+const redisUrl = config.redis?.url || 'redis://localhost:6379';
+
 // Main Redis client for caching
-export const redisClient = new Redis(config.redis.url, {
+export const redisClient = new Redis(redisUrl, {
     maxRetriesPerRequest: 3,
-    retryDelayOnFailover: 100,
     lazyConnect: true,
 });
 
 // Publisher client for Pub/Sub
-export const redisPub = new Redis(config.redis.url, {
+export const redisPub = new Redis(redisUrl, {
     maxRetriesPerRequest: 3,
     lazyConnect: true,
 });
 
 // Subscriber client for Pub/Sub  
-export const redisSub = new Redis(config.redis.url, {
+export const redisSub = new Redis(redisUrl, {
     maxRetriesPerRequest: 3,
     lazyConnect: true,
 });

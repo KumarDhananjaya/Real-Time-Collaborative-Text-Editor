@@ -26,7 +26,8 @@ function getDocRoom(docId: string): string {
  * Setup socket event handlers
  */
 export function setupSocketHandlers(io: SocketServer): void {
-    io.on('connection', async (socket: AuthenticatedSocket) => {
+    io.on('connection', (rawSocket) => {
+        const socket = rawSocket as AuthenticatedSocket;
         console.log(`🔌 Socket connected: ${socket.id} (${socket.userName})`);
         socketRooms.set(socket.id, new Set());
 
@@ -77,7 +78,7 @@ export function setupSocketHandlers(io: SocketServer): void {
 
                 // Get current awareness state
                 const awareness = documentManager.getAwareness(docId);
-                let awarenessMessage = new Uint8Array();
+                let awarenessMessage: any = new Uint8Array();
                 if (awareness) {
                     // Add this user to awareness
                     awareness.setLocalStateField('user', {
@@ -89,7 +90,7 @@ export function setupSocketHandlers(io: SocketServer): void {
                     awarenessMessage = awarenessProtocol.encodeAwarenessUpdate(
                         awareness,
                         Array.from(awareness.getStates().keys())
-                    );
+                    ) as unknown as Uint8Array;
                 }
 
                 // Notify other users
