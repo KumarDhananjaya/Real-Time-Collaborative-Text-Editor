@@ -6,6 +6,9 @@ import { QuillBinding } from 'y-quill';
 import Quill from 'quill';
 import QuillCursors from 'quill-cursors';
 import * as awarenessProtocol from 'y-protocols/awareness';
+import * as syncProtocol from 'y-protocols/sync';
+import * as encoding from 'lib0/encoding';
+import * as decoding from 'lib0/decoding';
 import 'quill/dist/quill.snow.css';
 import { useUser } from '../contexts/UserContext';
 import styles from './Editor.module.css';
@@ -100,6 +103,10 @@ function Editor() {
         });
         socketRef.current = socket;
 
+        // Message types
+        const MESSAGE_SYNC = 0;
+        const MESSAGE_AWARENESS = 1;
+
         socket.on('connect', () => {
             console.log('Connected to server');
             setConnected(true);
@@ -107,8 +114,20 @@ function Editor() {
             // Join document
             socket.emit('join-document', docId, (response: any) => {
                 if (response.sync) {
-                    // Apply initial sync state
-                    Y.applyUpdate(ydoc, new Uint8Array(response.sync), 'server');
+                    // Handle initial sync step 1 from server
+                    const encoder = encoding.createEncoder();
+                    encoding.writeVarUint(encoder, MESSAGE_SYNC);
+                    syncProtocol.readSyncMessage(
+                        decoding.createDecoder(new Uint8Array(response.sync)),
+                        encoder,
+                        ydoc,
+                        'server'
+                    );
+
+                    // If the reply contains data (Step 2), send it back
+                    if (encoding.length(encoder) > 1) {
+                        socket.emit('sync-update', docId, Array.from(encoding.toUint8Array(encoder)));
+                    }
                 }
                 if (response.awareness) {
                     awarenessProtocol.applyAwarenessUpdate(
@@ -125,15 +144,36 @@ function Editor() {
             setConnected(false);
         });
 
-        // Handle incoming Yjs updates
+        // Handle incoming Yjs updates (raw updates)
         socket.on('yjs-update', (update: number[]) => {
             Y.applyUpdate(ydoc, new Uint8Array(update), 'server');
         });
 
-        // Handle incoming sync updates (Yjs protocol)
+        // Handle incoming sync updates (protocol messages)
         socket.on('sync-update', (message: number[]) => {
-            // For now, treat sync-update as yjs-update
-            Y.applyUpdate(ydoc, new Uint8Array(message), 'server');
+            const encoder = encoding.createEncoder();
+            encoding.writeVarUint(encoder, MESSAGE_SYNC);
+
+            // Note: The server sends the message with the MESSAGE_SYNC prefix (0), 
+            // but the decoder below expects just the payload if we stripped it, 
+            // OR we handle the whole message if it's raw. 
+            // Server code wraps it in MESSAGE_SYNC? 
+            // Server handler: socket.to(room).emit('sync-update', message); 
+            // where 'message' came from client and starts with MESSAGE_SYNC.
+
+            const decoder = decoding.createDecoder(new Uint8Array(message));
+
+            // Read message type (server sends [0, ...])
+            const messageType = decoding.readVarUint(decoder);
+
+            if (messageType === MESSAGE_SYNC) {
+                syncProtocol.readSyncMessage(decoder, encoder, ydoc, 'server');
+
+                // If this generated a reply (e.g. Step 1 -> Step 2), send it back
+                if (encoding.length(encoder) > 1) {
+                    socket.emit('sync-update', docId, Array.from(encoding.toUint8Array(encoder)));
+                }
+            }
         });
 
         // Handle awareness updates
