@@ -1,0 +1,221 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 60px);
+    background: var(--bg-primary);
+}
+
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.backBtn {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.backBtn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.titleInput {
+    flex: 1;
+    max-width: 400px;
+    background: transparent;
+    border: 1px solid transparent;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.titleInput:hover {
+    background: var(--bg-tertiary);
+}
+
+.titleInput:focus {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-primary);
+    box-shadow: none;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: auto;
+}
+
+.saving {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    animation: pulse 1.5s infinite;
+}
+
+.connection {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+}
+
+.online {
+    color: var(--success);
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.offline {
+    color: var(--error);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.collaborators {
+    display: flex;
+    gap: -0.5rem;
+}
+
+.collaboratorAvatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 0.8rem;
+    border: 2px solid var(--bg-secondary);
+    margin-left: -8px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.collaboratorAvatar:first-child {
+    margin-left: 0;
+}
+
+.collaboratorAvatar:hover {
+    transform: scale(1.1);
+    z-index: 10;
+}
+
+.collaboratorAvatar.self {
+    border-color: var(--accent-primary);
+}
+
+.error {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--error);
+    color: var(--error);
+    padding: 0.75rem 1rem;
+    margin: 0 1.5rem;
+    margin-top: 1rem;
+    border-radius: 8px;
+}
+
+.error button {
+    background: transparent;
+    border: none;
+    color: var(--error);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0 0.25rem;
+}
+
+.editorWrapper {
+    flex: 1;
+    overflow: auto;
+    padding: 2rem;
+}
+
+.editor {
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    min-height: 600px;
+}
+
+/* Override Quill styles for dark theme */
+.editor :global(.ql-toolbar) {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    background: var(--bg-tertiary);
+    border-color: var(--border-color);
+}
+
+.editor :global(.ql-container) {
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+    min-height: 500px;
+}
+
+.editor :global(.ql-editor) {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text-primary);
+    padding: 2rem;
+}
+
+.editor :global(.ql-editor.ql-blank::before) {
+    color: var(--text-muted);
+    font-style: normal;
+}
+
+/* Cursors */
+.editor :global(.ql-cursor-flag) {
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.editor :global(.ql-cursor-caret) {
+    border-left-width: 2px;
+}
+
+@media (max-width: 768px) {
+    .toolbar {
+        flex-wrap: wrap;
+        padding: 0.75rem 1rem;
+    }
+
+    .titleInput {
+        order: 3;
+        flex: 1 1 100%;
+        max-width: none;
+        margin-top: 0.5rem;
+    }
+
+    .editorWrapper {
+        padding: 1rem;
+    }
+
+    .editor :global(.ql-editor) {
+        padding: 1rem;
+    }
+}
