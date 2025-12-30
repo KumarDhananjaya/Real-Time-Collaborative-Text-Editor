@@ -217,7 +217,11 @@ export class DocumentManager {
 
         // Schedule new persistence
         const timer = setTimeout(
-            () => this.persistDocument(docId),
+            () => {
+                this.persistDocument(docId).catch(err => {
+                    console.error(`❌ Failed to persist document ${docId}:`, err);
+                });
+            },
             config.snapshotInterval
         );
         this.persistenceTimers.set(docId, timer);

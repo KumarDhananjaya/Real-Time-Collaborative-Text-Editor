@@ -10,6 +10,8 @@ export async function connectMongoDB(): Promise<void> {
             maxPoolSize: 10,
             serverSelectionTimeoutMS: 5000,
             socketTimeoutMS: 45000,
+            connectTimeoutMS: 10000,
+            family: 4 // Force IPv4 to avoid some local DNS issues
         });
         console.log('✅ MongoDB connected');
     } catch (error) {
