@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { API_BASE_URL } from '../config';
 
 interface User {
     id: string;
@@ -44,7 +45,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const login = async (email: string) => {
-        const response = await fetch('/api/users/login', {
+        const response = await fetch(`${API_BASE_URL}/api/users/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email }),
@@ -63,7 +64,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     };
 
     const register = async (email: string, name: string) => {
-        const response = await fetch('/api/users/register', {
+        const response = await fetch(`${API_BASE_URL}/api/users/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, name }),
@@ -82,7 +83,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     };
 
     const loginAsGuest = async (name?: string) => {
-        const response = await fetch('/api/users/guest', {
+        const response = await fetch(`${API_BASE_URL}/api/users/guest`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: name || 'Guest' }),

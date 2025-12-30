@@ -10,6 +10,7 @@ import * as syncProtocol from 'y-protocols/sync';
 import * as encoding from 'lib0/encoding';
 import * as decoding from 'lib0/decoding';
 import 'quill/dist/quill.snow.css';
+import { API_BASE_URL } from '../config';
 import { useUser } from '../contexts/UserContext';
 import styles from './Editor.module.css';
 
@@ -97,7 +98,7 @@ function Editor() {
         bindingRef.current = binding;
 
         // Connect to socket
-        const socket = io('/', {
+        const socket = io(API_BASE_URL || '/', {
             auth: { token },
             transports: ['websocket'],
         });
@@ -105,7 +106,6 @@ function Editor() {
 
         // Message types
         const MESSAGE_SYNC = 0;
-        const MESSAGE_AWARENESS = 1;
 
         socket.on('connect', () => {
             console.log('Connected to server');

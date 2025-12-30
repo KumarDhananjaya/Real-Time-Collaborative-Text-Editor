@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useUser } from '../contexts/UserContext';
+import { API_BASE_URL } from '../config';
 import styles from './DocumentList.module.css';
 
 interface Document {
@@ -34,7 +35,7 @@ function DocumentList() {
 
     const fetchDocuments = async () => {
         try {
-            const response = await fetch('/api/documents', {
+            const response = await fetch(`${API_BASE_URL}/api/documents`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -59,7 +60,7 @@ function DocumentList() {
         setError('');
 
         try {
-            const response = await fetch('/api/documents', {
+            const response = await fetch(`${API_BASE_URL}/api/documents`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -89,7 +90,7 @@ function DocumentList() {
         if (!confirm('Are you sure you want to delete this document?')) return;
 
         try {
-            const response = await fetch(`/api/documents/${id}`, {
+            const response = await fetch(`${API_BASE_URL}/api/documents/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,
