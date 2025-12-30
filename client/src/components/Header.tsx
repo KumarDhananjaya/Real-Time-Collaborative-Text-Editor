@@ -49,7 +49,7 @@ function Header() {
                                     className={styles.avatar}
                                     style={{ backgroundColor: user.color }}
                                 >
-                                    {user.name.charAt(0).toUpperCase()}
+                                    {user?.name?.charAt(0).toUpperCase()}
                                 </div>
                                 <span className={styles.userName}>{user.name}</span>
                                 {user.isGuest && <span className={styles.guestBadge}>Guest</span>}
